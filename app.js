@@ -1,16 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { celebrate, Joi, errors } = require('celebrate');
-// const users = require('./routes/users');
-// const movies = require('./routes/movies');
-// const NotFoundError = require('./errors/NotFoundError');
-// const auth = require('./middlewares/auth');
+const { errors } = require('celebrate');
+
 const errorHandler = require('./middlewares/errorHendler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-// const {
-//   createUser, login,
-// } = require('./controllers/users');
 const router = require('./routes/index');
 
 const PORT = 3000;
