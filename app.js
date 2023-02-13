@@ -3,6 +3,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 
+const { NODE_ENV, DB_URL } = process.env;
+
 const errorHandler = require('./middlewares/errorHendler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
@@ -11,7 +13,7 @@ const PORT = 3000;
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/moviesdb', {
+mongoose.connect(NODE_ENV === 'production' ? DB_URL : 'mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
 }, () => {
   app.listen(PORT, () => {
