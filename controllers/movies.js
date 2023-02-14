@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const ErrorForbidden = require('../errors/ErrorForbidden');
+const { errorMessages } = require('../utils/constants');
 
 const getMovies = async (req, res, next) => {
   try {
@@ -17,16 +18,16 @@ const deleteMovie = async (req, res, next) => {
     const { _id } = req.params;
     const movie = await Movie.findById(_id);
     if (movie == null) {
-      throw new NotFoundError('Фильм не найден');
+      throw new NotFoundError(errorMessages.notFoundMovie);
     }
     if (String(movie.owner) === req.user._id) {
       await movie.remove();
       return res.status(200).json({ message: 'Фильм удален' });
     }
-    throw new ErrorForbidden('Нет прав для удаления фильма');
+    throw new ErrorForbidden(errorMessages.forbiddenDelete);
   } catch (e) {
     if (e.name === 'CastError') {
-      return next(new BadRequest('Передан некорректный запрос'));
+      return next(new BadRequest(errorMessages.badRequest));
     }
     return next(e);
   }
@@ -42,7 +43,7 @@ const addMovie = async (req, res, next) => {
     return res.status(201).json(result);
   } catch (e) {
     if (e.name === 'ValidationError') {
-      return next(new BadRequest('переданы некорректные данные в методы добавления фильма'));
+      return next(new BadRequest(errorMessages.badRequestMovie));
     }
     return next(e);
   }

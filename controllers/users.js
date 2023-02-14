@@ -8,17 +8,18 @@ const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const Unauthorized = require('../errors/Unauthorized');
+const { errorMessages } = require('../utils/constants');
 
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).select('+password');
     if (user === null) {
-      throw new Unauthorized('Неправильный пароль или логин');
+      throw new Unauthorized(errorMessages.wrongData);
     }
     const result = await bcrypt.compare(password, user.password);
     if (!result) {
-      throw new Unauthorized('Неправильный пароль или логин');
+      throw new Unauthorized(errorMessages.wrongData);
     }
     const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
     return res.status(200).json({ token });
@@ -45,10 +46,10 @@ const createUser = async (req, res, next) => {
     });
   } catch (e) {
     if (e.code === 11000) {
-      return next(new ConflictError('Пользоватиель с таким email уже существует'));
+      return next(new ConflictError(errorMessages.conflictError));
     }
     if (e.name === 'ValidationError') {
-      return next(new BadRequest('переданы некорректные данные в методы создания пользователя'));
+      return next(new BadRequest(errorMessages.badRequestUser));
     }
     return next(e);
   }
@@ -59,7 +60,7 @@ const getUser = async (req, res, next) => {
     const userId = req.user._id;
     const user = await User.findById(userId);
     if (user === null) {
-      throw new NotFoundError('Пользователь не найден');
+      throw new NotFoundError(errorMessages.notFoundUser);
     }
     return res.status(200).json(user);
   } catch (e) {
@@ -76,13 +77,13 @@ const updateUser = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (user === null) {
-      throw new NotFoundError('Пользователь не найден');
+      throw new NotFoundError(errorMessages.notFoundUser);
     }
 
     return res.status(200).json(user);
   } catch (e) {
     if (e.name === 'ValidationError') {
-      return next(new BadRequest('переданы некорректные данные в методы создания пользователя'));
+      return next(new BadRequest(errorMessages.badRequestUser));
     }
     return next(e);
   }

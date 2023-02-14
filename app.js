@@ -9,7 +9,7 @@ const errorHandler = require('./middlewares/errorHendler');
 const { limiter } = require('./middlewares/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
-const dbUrlDev = require('./utils/devConfig');
+const { dbUrlDev } = require('./utils/devConfig');
 
 const PORT = 3000;
 
