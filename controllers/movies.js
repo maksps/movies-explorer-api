@@ -36,6 +36,11 @@ const deleteMovie = async (req, res, next) => {
 const addMovie = async (req, res, next) => {
   try {
     const { ...data } = req.body;
+
+    if (await Movie.findOne({ movieId: data.movieId }, { movieId: data.movieId })) {
+      return res.status(200).json({ message: 'Такой фильм в базе пользователя уже есть' });
+    }
+
     const movie = await Movie.create({
       ...data, owner: req.user._id,
     });

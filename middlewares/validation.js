@@ -9,7 +9,7 @@ const movieValidator = celebrate({
     year: Joi.string().required(),
     description: Joi.string().required(),
     image: Joi.string().regex(urlRegEx).required(),
-    trailerLink: Joi.string().regex(urlRegEx).required(),
+    trailerLink: Joi.string().required(),
     thumbnail: Joi.string().regex(urlRegEx).required(),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
@@ -31,13 +31,20 @@ const userSignUpValidator = celebrate({
   }).unknown(true),
 });
 
+const userSignInValidator = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+});
+
 const userDataValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
   }),
 });
 
 module.exports = {
-  movieValidator, idValidator, userSignUpValidator, userDataValidator,
+  movieValidator, idValidator, userSignUpValidator, userDataValidator, userSignInValidator,
 };

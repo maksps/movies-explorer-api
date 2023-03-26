@@ -22,11 +22,12 @@ const login = async (req, res, next) => {
       throw new Unauthorized(errorMessages.wrongData);
     }
     const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-    return res.status(200).json({ token });
+    return res.status(200).json({ token, user });
   } catch (e) {
     return next(e);
   }
 };
+
 const createUser = async (req, res, next) => {
   try {
     const {
@@ -38,11 +39,9 @@ const createUser = async (req, res, next) => {
       password: hash,
       name,
     });
-
+    const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
     return res.status(201).json({
-      _id: user._id,
-      email,
-      name,
+      token, user,
     });
   } catch (e) {
     if (e.code === 11000) {
