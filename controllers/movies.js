@@ -37,7 +37,7 @@ const addMovie = async (req, res, next) => {
   try {
     const { ...data } = req.body;
 
-    if (await Movie.findOne({ movieId: data.movieId }, { movieId: data.movieId })) {
+    if (await Movie.findOne({ movieId: data.movieId, owner: req.user._id}, { movieId: data.movieId })) {
       return res.status(200).json({ message: 'Такой фильм в базе пользователя уже есть' });
     }
 
